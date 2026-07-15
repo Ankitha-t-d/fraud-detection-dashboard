@@ -30,6 +30,17 @@ fraud-detection-dashboard/
 ├── static/
 └── database/
 
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Fraud Analysis
+![Fraud Chart](screenshots/fraud-chart.png)
+
+### Transactions
+![Transactions](screenshots/transactions.png)
+
 ## How to Run
 
 1. Install dependencies:
