@@ -33,13 +33,9 @@ fraud-detection-dashboard/
 ## Screenshots
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
 ### Fraud Analysis
-![Fraud Chart](screenshots/fraud-chart.png)
-
 ### Transactions
-![Transactions](screenshots/transactions.png)
+
 
 ## How to Run
 
