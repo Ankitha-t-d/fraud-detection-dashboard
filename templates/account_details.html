@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Details</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+<nav class="navbar navbar-dark bg-primary rounded mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand">🏦 Bank Fraud Detection System</span>
+
+        <div>
+            <a href="/dashboard" class="btn btn-light">⬅ Back</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="card shadow">
+    <div class="card-body">
+        <h3>👤 Customer Information</h3>
+        <hr>
+
+        <p><strong>Account ID:</strong> {{ account_id }}</p>
+        <p><strong>Customer Name:</strong> {{ customer_name }}</p>
+        <p><strong>Total Amount:</strong> ₹{{ total_amount }}</p>
+
+        {% if risk_level=="High" %}
+        <span class="badge bg-danger">High Risk</span>
+        {% elif risk_level=="Medium" %}
+        <span class="badge bg-warning">Medium Risk</span>
+        {% else %}
+        <span class="badge bg-success">Low Risk</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="text-end mt-3">
+    <a href="/download?account_id={{account_id}}" class="btn btn-success">
+        📥 Download Transactions CSV
+    </a>
+</div>
+
+<h3 class="mt-4">Recent Transactions</h3>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Transaction ID</th>
+            <th>Account ID</th>
+            <th>Amount</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for txn in recent_transactions %}
+        <tr>
+            <td>{{txn[0]}}</td>
+            <td>{{txn[1]}}</td>
+            <td>{{txn[2]}}</td>
+            <td>{{txn[3]}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<h3>Transactions by Category</h3>
+
+<canvas id="categoryChart"></canvas>
+
+<hr>
+
+<h3>Fraud vs Normal Transactions</h3>
+
+<div style="width:400px;margin:auto">
+    <canvas id="pieChart"></canvas>
+</div>
+
+<hr>
+
+<h3>Selected Account Fraud Analysis</h3>
+
+<div class="row">
+
+<div class="col-md-6">
+<div class="card shadow">
+<div class="card-body">
+
+<p><strong>Total Transactions:</strong> {{account_total}}</p>
+<p><strong>Fraud Transactions:</strong> {{account_fraud}}</p>
+<p><strong>Normal Transactions:</strong> {{account_normal}}</p>
+
+{% if account_fraud>0 %}
+<div class="alert alert-danger">🚨 Fraud Detected</div>
+{% else %}
+<div class="alert alert-success">✅ No Fraud Detected</div>
+{% endif %}
+
+</div>
+</div>
+</div>
+
+<div class="col-md-6">
+<div style="width:350px;margin:auto">
+<canvas id="accountPieChart"></canvas>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+const chartData = {{ chart_data | tojson }};
+
+const labels = chartData.map(item => item[0]);
+const values = chartData.map(item => item[1]);
+
+new Chart(document.getElementById("categoryChart"), {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Transactions",
+            data: values,
+            backgroundColor: "#0d6efd",
+            borderColor: "#0d6efd",
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("pieChart"),{
+    type:"pie",
+    data:{
+        labels:["Fraud","Normal"],
+        datasets:[{
+            data:[Number("{{ fraud_count }}"), Number("{{ normal_count }}")],
+            backgroundColor:["#dc3545","#198754"]
+        }]
+    }
+});
+
+new Chart(document.getElementById("accountPieChart"),{
+    type:"pie",
+    data:{
+        labels:["Fraud","Normal"],
+        datasets:[{
+            data:[Number("{{ account_fraud }}"), Number("{{ account_normal }}")],
+            backgroundColor:["#dc3545","#198754"]
+        }]
+    }
+});
+</script>
+
+</body>
+</html>
